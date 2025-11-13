@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "esl-app",
   "private": true,
   "scripts": {
     "build": "turbo run build",
