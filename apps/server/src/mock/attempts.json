@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "word": "adapt",
+    "correct": false
+  },
+  {
+    "id": 2,
+    "word": "switch",
+    "correct": true
+  },
+  {
+    "id": 3,
+    "word": "modify",
+    "correct": false
+  },
+  {
+    "id": 4,
+    "word": "tweak",
+    "correct": true
+  },
+  {
+    "id": 5,
+    "word": "unravel",
+    "correct": false
+  }
+]
