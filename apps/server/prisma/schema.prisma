@@ -42,4 +42,12 @@ model Word {
   id      Int      @id @default(autoincrement())
   term   String   
   definition String
+  lessonID Int
+  lesson Lesson @relation (fields: [lessonID], references: [id])
+}
+
+model Lesson {
+  id      Int      @id @default(autoincrement())
+  title String @unique
+  words Word[]
 }

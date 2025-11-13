@@ -35,9 +35,39 @@ app.get('/', (_: Request, res: Response) => {
   // res.send('Express + TypeScript Server')
 })
 
-app.get('/api/words', async (req, res) => {
-  const words = await prisma.word.findMany()
-  res.json(words)
+// app.get('/api/words', async (req, res) => {
+//   const words = await prisma.word.findMany()
+//   res.json(words)
+// })
+
+// app.post('/api/words', async (req, res) => {
+//   const { term, definition } = req.body
+
+//   const word = await prisma.word.create({
+//     data: { term, definition },
+//   })
+//   res.json(word)
+// })
+
+app.post('/api/lessons', async (req, res) => {
+  const { title } = req.body
+
+  const lesson = await prisma.lesson.create({
+    data: { title },
+  })
+  res.json(lesson)
+})
+
+app.get('/api/lessons/:id', async (req, res) => {
+  const id = Number(req.params.id)
+
+  const lesson = await prisma.lesson.findUnique({
+    where: { id },
+    include: {
+      words: true,
+    },
+  })
+  res.json(lesson)
 })
 
 app.get('/api/goals', (req, res) => {
