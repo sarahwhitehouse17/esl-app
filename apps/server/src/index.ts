@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express'
 import prisma from './prisma'
+import bcrypt from 'bcrypt'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -22,8 +23,10 @@ app.get('/api/users/:username', async (req, res) => {
 app.post('/api/users', async (req, res) => {
   const { username, password } = req.body
 
+  const hashedPassword = await bcrypt.hash(password, 10)
+
   const user = await prisma.user.create({
-    data: { username, password },
+    data: { username, password: hashedPassword },
   })
   res.json(user)
 })
