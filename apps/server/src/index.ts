@@ -32,45 +32,66 @@ app.post('/api/users', async (req, res) => {
 })
 
 app.get('/', (_: Request, res: Response) => {
-  // res.send('Express + TypeScript Server')
+  res.send('Express + TypeScript Server')
 })
 
 //WORDS
 
-app.get('/api/users/:username/lessons/:id/words', async (req, res) => {
-  const lessonId = Number(req.params.id)
+app.get('/api/users/:userId/lessons/:lessonId/words', async (req, res) => {
+  const userId = Number(req.params.userId)
+  const lessonId = Number(req.params.lessonId)
+
+  const lesson = await prisma.lesson.findFirst({
+    where: { id: lessonId, userId },
+  })
+
+  if (!lesson) {
+    return res.status(404).json({ error: 'Lesson not found' })
+  }
+
   const words = await prisma.word.findMany({
     where: { lessonId },
   })
   res.json(words)
 })
 
-app.post('/api/users/:username/lessons/:id/words', async (req, res) => {
-  const lessonID = Number(req.params.id)
+app.post('/api/users/:userId/lessons/:lessonId/words', async (req, res) => {
+  const userId = Number(req.params.userId)
+  const lessonId = Number(req.params.lessonId)
   const { term, definition } = req.body
 
+  const lesson = await prisma.lesson.findFirst({
+    where: { id: lessonId, userId },
+  })
+
+  if (!lesson) {
+    return res.status(404).json({ error: 'lesson not found' })
+  }
+
   const word = await prisma.word.create({
-    data: { term, definition, lessonID },
+    data: { term, definition, lessonId },
   })
   res.json(word)
 })
 
 //LESSONS
 
-app.post('/api/users/:username/lessons', async (req, res) => {
+app.post('/api/users/:userId/lessons', async (req, res) => {
+  const userId = Number(req.params.userId)
   const { title } = req.body
 
   const lesson = await prisma.lesson.create({
-    data: { title },
+    data: { userId, title },
   })
   res.json(lesson)
 })
 
-app.get('/api/users/:username/lessons/:id', async (req, res) => {
+app.get('/api/users/:userId/lessons/:id', async (req, res) => {
+  const userId = Number(req.params.userId)
   const id = Number(req.params.id)
 
-  const lesson = await prisma.lesson.findUnique({
-    where: { id },
+  const lesson = await prisma.lesson.findFirst({
+    where: { userId, id },
     include: {
       words: true,
     },
@@ -78,50 +99,48 @@ app.get('/api/users/:username/lessons/:id', async (req, res) => {
   res.json(lesson)
 })
 
-//GOALS
-
-app.get('/api/users/:username/goals', async (req, res) => {
-  const { username } = req.params
+app.get('/api/users/:userId/goals', async (req, res) => {
+  const userId = Number(req.params.userId)
 
   const goals = await prisma.goal.findMany({
-    where: { username },
+    where: { userId },
   })
   res.json(goals)
 })
 
-app.post('/api/users/:username/goals', async (req, res) => {
+app.post('/api/users/:userId/goals', async (req, res) => {
   console.log('POST ROUTE REACHED')
-  const { username } = req.params
+  const userId = Number(req.params.userId)
   const { goalTitle } = req.body
 
   const goal = await prisma.goal.create({
-    data: { username, goalTitle },
+    data: { userId, goalTitle },
   })
   res.json(goal)
 })
 
-app.post('/api/users/:username/lessons/:id/attempts', async (req, res) => {
-  const { username } = req.params
-  const { wordId, correct } = req.body
+// app.post('/api/users/:userId/lessons/:id/attempts', async (req, res) => {
+//   const { username } = req.params
+//   const { wordId, correct } = req.body
 
-  const attempt = await prisma.attempt.create({
-    data: {
-      username,
-      wordId,
-      correct,
-    },
-  })
-  res.json(attempt)
-})
+//   const attempt = await prisma.attempt.create({
+//     data: {
+//       username,
+//       wordId,
+//       correct,
+//     },
+//   })
+//   res.json(attempt)
+// })
 
-app.get('/api/users/:username/lessons/:id/attempts', async (req, res) => {
-  const { username } = req.params
+// app.get('/api/users/:username/lessons/:id/attempts', async (req, res) => {
+//   const { username } = req.params
 
-  const attempt = await prisma.attempt.findMany({
-    where: { username },
-  })
-  res.json(attempt)
-})
+//   const attempt = await prisma.attempt.findMany({
+//     where: { username },
+//   })
+//   res.json(attempt)
+// })
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`)
