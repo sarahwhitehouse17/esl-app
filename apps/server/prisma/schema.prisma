@@ -32,8 +32,8 @@ model Attempt {
 
 model Goal {
   id      Int      @id @default(autoincrement())
-  goalTitle   String   @unique
   username    String
+  goalTitle   String   @unique
   createdAt   DateTime @default(now())
 
 }

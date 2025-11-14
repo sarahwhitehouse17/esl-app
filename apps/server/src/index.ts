@@ -55,7 +55,7 @@ app.post('/api/lessons/:id/words', async (req, res) => {
   res.json(word)
 })
 
-//lessons
+//LESSONS
 
 app.post('/api/lessons', async (req, res) => {
   const { title } = req.body
@@ -78,12 +78,26 @@ app.get('/api/lessons/:id', async (req, res) => {
   res.json(lesson)
 })
 
-app.get('/api/goals', (req, res) => {
-  // res.json(goals)
+//GOALS
+
+app.get('/api/users/:username/goals', async (req, res) => {
+  const { username } = req.params
+
+  const goals = await prisma.goal.findMany({
+    where: { username },
+  })
+  res.json(goals)
 })
 
-app.post('/api/goals', (req, res) => {
-  // res.json(req.body)
+app.post('/api/users/:username/goals', async (req, res) => {
+  console.log('POST ROUTE REACHED')
+  const { username } = req.params
+  const { goalTitle } = req.body
+
+  const goal = await prisma.goal.create({
+    data: { username, goalTitle },
+  })
+  res.json(goal)
 })
 
 app.post('/api/attempts', (req, res) => {
