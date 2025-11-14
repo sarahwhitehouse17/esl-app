@@ -119,19 +119,39 @@ app.post('/api/users/:userId/goals', async (req, res) => {
   res.json(goal)
 })
 
-// app.post('/api/users/:userId/lessons/:id/attempts', async (req, res) => {
-//   const { username } = req.params
-//   const { wordId, correct } = req.body
+//attempts
 
-//   const attempt = await prisma.attempt.create({
-//     data: {
-//       username,
-//       wordId,
-//       correct,
-//     },
-//   })
-//   res.json(attempt)
-// })
+app.post('/api/users/:userId/lessons/:lessonId/attempts', async (req, res) => {
+  const userId = Number(req.params.userId)
+  const lessonId = Number(req.params.lessonId)
+  const { correct } = req.body
+
+  try {
+    const count = await prisma.attempt.count({
+      where: { userId, lessonId },
+    })
+
+    if (count >= 3) {
+      return res
+        .status(400)
+        .json({ error: 'Maximum number of attempts reached' })
+    }
+
+    const attemptNum = count + 1
+
+    const attempt = await prisma.attempt.create({
+      data: {
+        userId,
+        lessonId,
+        attemptNum,
+        correct,
+      },
+    })
+    res.json(attempt)
+  } catch {
+    res.status(500).json({ error: 'server error' })
+  }
+})
 
 // app.get('/api/users/:username/lessons/:id/attempts', async (req, res) => {
 //   const { username } = req.params

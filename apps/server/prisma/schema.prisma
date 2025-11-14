@@ -23,17 +23,6 @@ model User {
   createdAt   DateTime @default(now())
 }
 
-model Attempt {
-  id      Int      @id @default(autoincrement())
-  wordId Int
-  correct Boolean
-  createdAt   DateTime @default(now())
-  lessonId Int
-  userId Int
-  lesson Lesson @relation (fields: [lessonId], references: [id])
-  user User @relation (fields: [userId], references: [id])
-  word Word @relation (fields: [wordId], references: [id])
-}
 
 model Goal {
   id      Int      @id @default(autoincrement())
@@ -50,7 +39,6 @@ model Word {
   definition String
   lessonId Int
   lesson Lesson @relation (fields: [lessonId], references: [id])
-  attempts Attempt[]
 }
 
 model Lesson {
@@ -61,5 +49,18 @@ model Lesson {
   userId Int
   user User @relation (fields: [userId], references: [id])
 }
+
+model Attempt {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  lessonId   Int
+  attemptNum Int
+  correct    Boolean
+  createdAt  DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
 
 
