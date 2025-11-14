@@ -37,15 +37,15 @@ app.get('/', (_: Request, res: Response) => {
 
 //WORDS
 
-app.get('/api/lessons/:id/words', async (req, res) => {
-  const lessonID = Number(req.params.id)
+app.get('/api/users/:username/lessons/:id/words', async (req, res) => {
+  const lessonId = Number(req.params.id)
   const words = await prisma.word.findMany({
-    where: { lessonID },
+    where: { lessonId },
   })
   res.json(words)
 })
 
-app.post('/api/lessons/:id/words', async (req, res) => {
+app.post('/api/users/:username/lessons/:id/words', async (req, res) => {
   const lessonID = Number(req.params.id)
   const { term, definition } = req.body
 
@@ -57,7 +57,7 @@ app.post('/api/lessons/:id/words', async (req, res) => {
 
 //LESSONS
 
-app.post('/api/lessons', async (req, res) => {
+app.post('/api/users/:username/lessons', async (req, res) => {
   const { title } = req.body
 
   const lesson = await prisma.lesson.create({
@@ -66,7 +66,7 @@ app.post('/api/lessons', async (req, res) => {
   res.json(lesson)
 })
 
-app.get('/api/lessons/:id', async (req, res) => {
+app.get('/api/users/:username/lessons/:id', async (req, res) => {
   const id = Number(req.params.id)
 
   const lesson = await prisma.lesson.findUnique({
@@ -100,21 +100,21 @@ app.post('/api/users/:username/goals', async (req, res) => {
   res.json(goal)
 })
 
-app.post('/api/users/:username/attempts', async (req, res) => {
+app.post('/api/users/:username/lessons/:id/attempts', async (req, res) => {
   const { username } = req.params
-  const { wordID, correct } = req.body
+  const { wordId, correct } = req.body
 
   const attempt = await prisma.attempt.create({
     data: {
       username,
-      wordID,
+      wordId,
       correct,
     },
   })
   res.json(attempt)
 })
 
-app.get('/api/users/:username/attempts', async (req, res) => {
+app.get('/api/users/:username/lessons/:id/attempts', async (req, res) => {
   const { username } = req.params
 
   const attempt = await prisma.attempt.findMany({

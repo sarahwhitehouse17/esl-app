@@ -11,31 +11,36 @@ generator client {
 datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL")
-
 }
-
 
 model User {
   id      Int      @id @default(autoincrement())
   username    String @unique
-  password   String   
+  password   String
+  lessons Lesson[]
+  attempts Attempt[]
+  goals Goal[]
   createdAt   DateTime @default(now())
-
 }
 
 model Attempt {
   id      Int      @id @default(autoincrement())
-  username String
-  wordID Int
-  createdAt   DateTime @default(now())
+  wordId Int
   correct Boolean
+  createdAt   DateTime @default(now())
+  lessonId Int
+  userId Int
+  lesson Lesson @relation (fields: [lessonId], references: [id])
+  user User @relation (fields: [userId], references: [id])
+  word Word @relation (fields: [wordId], references: [id])
 }
 
 model Goal {
   id      Int      @id @default(autoincrement())
-  username    String
-  goalTitle   String   @unique
+  goalTitle   String   
   createdAt   DateTime @default(now())
+  userId Int
+  user User @relation (fields: [userId], references:[id])
 
 }
 
@@ -43,12 +48,16 @@ model Word {
   id      Int      @id @default(autoincrement())
   term   String   
   definition String
-  lessonID Int
-  lesson Lesson @relation (fields: [lessonID], references: [id])
+  lessonId Int
+  lesson Lesson @relation (fields: [lessonId], references: [id])
+  attempts Attempt[]
 }
 
 model Lesson {
   id      Int      @id @default(autoincrement())
-  title String @unique
+  title String 
   words Word[]
+  attempts Attempt[]
+  userId Int
+  user User @relation (fields: [userId], references: [id])
 }
