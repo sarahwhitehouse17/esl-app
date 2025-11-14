@@ -100,12 +100,27 @@ app.post('/api/users/:username/goals', async (req, res) => {
   res.json(goal)
 })
 
-app.post('/api/attempts', (req, res) => {
-  // res.json(attempts)
+app.post('/api/users/:username/attempts', async (req, res) => {
+  const { username } = req.params
+  const { wordID, correct } = req.body
+
+  const attempt = await prisma.attempt.create({
+    data: {
+      username,
+      wordID,
+      correct,
+    },
+  })
+  res.json(attempt)
 })
 
-app.get('/api/attempts', (req, res) => {
-  // res.json(attempts)
+app.get('/api/users/:username/attempts', async (req, res) => {
+  const { username } = req.params
+
+  const attempt = await prisma.attempt.findMany({
+    where: { username },
+  })
+  res.json(attempt)
 })
 
 app.listen(PORT, () => {

@@ -25,7 +25,8 @@ model User {
 
 model Attempt {
   id      Int      @id @default(autoincrement())
-  word   String   
+  username String
+  wordID Int
   createdAt   DateTime @default(now())
   correct Boolean
 }
