@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8080
 const app: Express = express()
 app.use(express.json())
 
-//users methods
+//USERS
 
 app.get('/api/users/:username', async (req, res) => {
   const { username } = req.params
@@ -35,19 +35,27 @@ app.get('/', (_: Request, res: Response) => {
   // res.send('Express + TypeScript Server')
 })
 
-// app.get('/api/words', async (req, res) => {
-//   const words = await prisma.word.findMany()
-//   res.json(words)
-// })
+//WORDS
 
-// app.post('/api/words', async (req, res) => {
-//   const { term, definition } = req.body
+app.get('/api/lessons/:id/words', async (req, res) => {
+  const lessonID = Number(req.params.id)
+  const words = await prisma.word.findMany({
+    where: { lessonID },
+  })
+  res.json(words)
+})
 
-//   const word = await prisma.word.create({
-//     data: { term, definition },
-//   })
-//   res.json(word)
-// })
+app.post('/api/lessons/:id/words', async (req, res) => {
+  const lessonID = Number(req.params.id)
+  const { term, definition } = req.body
+
+  const word = await prisma.word.create({
+    data: { term, definition, lessonID },
+  })
+  res.json(word)
+})
+
+//lessons
 
 app.post('/api/lessons', async (req, res) => {
   const { title } = req.body
