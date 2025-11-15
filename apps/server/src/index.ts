@@ -209,6 +209,16 @@ app.post('/api/users/:userId/goals', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'No user found. Please try again.' })
     }
+
+    const existingGoal = await prisma.goal.findFirst({
+      where: { userId, goalTitle },
+    })
+    if (existingGoal) {
+      return res
+        .status(400)
+        .json({ error: 'This goal has already been selected' })
+    }
+
     const count = await prisma.goal.count({
       where: { userId },
     })
