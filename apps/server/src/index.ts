@@ -1,6 +1,7 @@
-import express, { Express, Request, Response } from 'express'
+import express, { Express } from 'express'
+import usersRoutes from './routes/usersRoutes'
+import goalsRoutes from './routes/goalsRoutes'
 import prisma from './prisma'
-import bcrypt from 'bcrypt'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -11,55 +12,7 @@ app.use(express.json())
 
 //USERS
 
-app.get('/api/users/:username', async (req, res) => {
-  const { username } = req.params
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { username },
-    })
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    return res.status(200).json(user)
-  } catch (err) {
-    console.error(err)
-    return res.status(500).json({ error: 'Server error, please try again' })
-  }
-})
-
-app.post('/api/users', async (req, res) => {
-  const { username, password } = req.body
-
-  try {
-    if (
-      !username ||
-      username.trim().length < 4 ||
-      !password ||
-      password.trim().length < 4
-    ) {
-      return res
-        .status(400)
-        .json({ error: 'Username and password are required fields.' })
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    const user = await prisma.user.create({
-      data: { username, password: hashedPassword },
-    })
-    return res.status(201).json(user)
-  } catch (err: unknown) {
-    console.error(err)
-    res.status(500).json({ error: 'Server error. Please try again' })
-  }
-})
-
-app.get('/', (_: Request, res: Response) => {
-  res.send('Express + TypeScript Server')
-})
+app.use('/api', usersRoutes)
 
 //WORDS
 
@@ -172,73 +125,9 @@ app.get('/api/users/:userId/lessons/:id', async (req, res) => {
   }
 })
 
-app.get('/api/users/:userId/goals', async (req, res) => {
-  const userId = Number(req.params.userId)
+//GOALS
 
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    })
-
-    if (!user) {
-      return res
-        .status(404)
-        .json({ error: 'User not found. Please try again.' })
-    }
-    const goals = await prisma.goal.findMany({
-      where: { userId },
-    })
-    return res.status(200).json(goals)
-  } catch (err) {
-    console.error(err)
-    return res.status(500).json({ error: 'Server error. Please try again.' })
-  }
-})
-
-app.post('/api/users/:userId/goals', async (req, res) => {
-  const userId = Number(req.params.userId)
-  const { goalTitle } = req.body
-
-  try {
-    if (!goalTitle) {
-      return res.status(400).json({ error: 'Goal title is required.' })
-    }
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    })
-    if (!user) {
-      return res.status(404).json({ error: 'No user found. Please try again.' })
-    }
-
-    const existingGoal = await prisma.goal.findFirst({
-      where: { userId, goalTitle },
-    })
-    if (existingGoal) {
-      return res
-        .status(400)
-        .json({ error: 'This goal has already been selected' })
-    }
-
-    const count = await prisma.goal.count({
-      where: { userId },
-    })
-
-    if (count >= 3) {
-      return res.status(400).json({ error: 'You can only select 3 goals' })
-    }
-
-    const goal = await prisma.goal.create({
-      data: { userId, goalTitle },
-    })
-
-    return res.status(201).json(goal)
-  } catch (err) {
-    console.error(err)
-    return res
-      .status(500)
-      .json({ error: 'Unable to post goal. Please try again.' })
-  }
-})
+app.use('/api', goalsRoutes)
 
 //attempts
 
