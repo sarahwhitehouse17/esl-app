@@ -153,14 +153,33 @@ app.post('/api/users/:userId/lessons/:lessonId/attempts', async (req, res) => {
   }
 })
 
-// app.get('/api/users/:username/lessons/:id/attempts', async (req, res) => {
-//   const { username } = req.params
+app.get(
+  '/api/users/:userId/lessons/:lessonId/attempts/passed',
+  async (req, res) => {
+    const userId = Number(req.params.userId)
+    const lessonId = Number(req.params.lessonId)
 
-//   const attempt = await prisma.attempt.findMany({
-//     where: { username },
-//   })
-//   res.json(attempt)
-// })
+    const passed = await prisma.attempt.findFirst({
+      where: { userId, lessonId, correct: true },
+      orderBy: { attemptNum: 'asc' },
+    })
+    res.json({ passed: Boolean(passed) })
+  }
+)
+
+app.get(
+  '/api/users/:userId/lessons/:lessonId/attempts/remaining',
+  async (req, res) => {
+    const userId = Number(req.params.userId)
+    const lessonId = Number(req.params.lessonId)
+
+    const count = await prisma.attempt.count({
+      where: { userId, lessonId },
+    })
+    const remaining = Math.max(0, 3 - count)
+    res.json({ remaining })
+  }
+)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`)
