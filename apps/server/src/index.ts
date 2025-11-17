@@ -1,6 +1,8 @@
 import express, { Express } from 'express'
 import usersRoutes from './routes/usersRoutes'
 import goalsRoutes from './routes/goalsRoutes'
+import lessonsRoutes from './routes/lessonsRoutes'
+import wordsRoutes from './routes/wordsRoutes'
 import prisma from './prisma'
 
 import dotenv from 'dotenv'
@@ -16,114 +18,12 @@ app.use('/api', usersRoutes)
 
 //WORDS
 
-app.get('/api/users/:userId/lessons/:lessonId/words', async (req, res) => {
-  const userId = Number(req.params.userId)
-  const lessonId = Number(req.params.lessonId)
+app.use('/api', wordsRoutes)
 
-  try {
-    const lesson = await prisma.lesson.findFirst({
-      where: { id: lessonId, userId },
-    })
-
-    if (!lesson) {
-      return res.status(404).json({ error: 'Lesson not found for this user' })
-    }
-
-    const words = await prisma.word.findMany({
-      where: { lessonId },
-    })
-    res.status(200).json(words)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'server error' })
-  }
-})
-
-app.post('/api/users/:userId/lessons/:lessonId/words', async (req, res) => {
-  const userId = Number(req.params.userId)
-  const lessonId = Number(req.params.lessonId)
-  const { term, definition } = req.body
-
-  try {
-    if (!term || !definition) {
-      return res.status(400).json({ error: 'term or definition missing.' })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    })
-
-    if (!user) {
-      return res.status(404).json({ error: 'No user or lesson found' })
-    }
-
-    const lesson = await prisma.lesson.findFirst({
-      where: { id: lessonId, userId },
-    })
-
-    if (!lesson) {
-      return res.status(404).json({ error: 'lesson not found' })
-    }
-
-    const word = await prisma.word.create({
-      data: { term, definition, lessonId },
-    })
-    res.status(201).json(word)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Unable to find data' })
-  }
-})
 
 //LESSONS
 
-app.post('/api/users/:userId/lessons', async (req, res) => {
-  const userId = Number(req.params.userId)
-  const { title } = req.body
-
-  try {
-    if (!title || title.trim().length === 0) {
-      return res.status(400).json({ error: 'Lesson title cannot be empty' })
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    })
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-    const lesson = await prisma.lesson.create({
-      data: { userId, title },
-    })
-    res.status(201).json(lesson)
-  } catch {
-    res.status(500).json({ error: 'Unable to find data' })
-  }
-})
-
-app.get('/api/users/:userId/lessons/:id', async (req, res) => {
-  const userId = Number(req.params.userId)
-  const id = Number(req.params.id)
-
-  try {
-    const lesson = await prisma.lesson.findFirst({
-      where: { userId, id },
-      include: {
-        words: true,
-      },
-    })
-    if (!lesson) {
-      return res.status(404).json({ error: 'Lesson not found for this user' })
-    }
-
-    res.status(200).json(lesson)
-  } catch {
-    res.status(500).json({
-      error: 'Unable to load this data. Please check user and lesson ID',
-    })
-  }
-})
+app.use('/api', lessonsRoutes)
 
 //GOALS
 
