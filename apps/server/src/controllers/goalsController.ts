@@ -1,16 +1,10 @@
 import { Request, Response } from 'express'
 import * as goalsRepo from '../data/goalsRepository'
-import { findUserById } from '../data/usersRepository'
+import { DEFAULT_USER_ID } from '../defaultUser'
 
 export const getGoals = async (req: Request, res: Response) => {
-  const userId = Number(req.params.userId)
+  const userId = DEFAULT_USER_ID
   try {
-    const user = await findUserById(userId)
-    if (!user) {
-      return res
-        .status(404)
-        .json({ error: 'User not found. Please try again.' })
-    }
     const goals = await goalsRepo.findGoalsByUserId(userId)
     return res.status(200).json(goals)
   } catch (err) {
@@ -20,16 +14,12 @@ export const getGoals = async (req: Request, res: Response) => {
 }
 
 export const createGoal = async (req: Request, res: Response) => {
-  const userId = Number(req.params.userId)
+  const userId = DEFAULT_USER_ID
   const { goalTitle } = req.body
 
   try {
     if (!goalTitle) {
       return res.status(400).json({ error: 'Goal title is required.' })
-    }
-    const user = await findUserById(userId)
-    if (!user) {
-      return res.status(404).json({ error: 'No user found. Please try again.' })
     }
 
     const existingGoal = await goalsRepo.findGoalByTitleForUser(

@@ -6,13 +6,20 @@ export const createNewLesson = (userId: number, title: string) => {
   })
 }
 
+export const getAllLessonsByUserId = (userId: number) => {
+  return prisma.lesson.findMany({
+    where: { userId },
+    orderBy: { id: 'asc' }, // optional but nice
+  })
+}
+
 export const getLessonByUserId = (userId: number, id: number) => {
-    return prisma.lesson.findFirst({
-        where: {userId, id},
-        include: {
-            words: true
-        }
-    })
+  return prisma.lesson.findFirst({
+    where: { userId, id },
+    include: {
+      words: true,
+    },
+  })
 }
 
 //   const lesson = await prisma.lesson.findFirst({
@@ -21,7 +28,6 @@ export const getLessonByUserId = (userId: number, id: number) => {
 //       words: true,
 //     },
 //   })
-
 
 // app.get('/api/users/:userId/lessons/:id', async (req, res) => {
 //   const userId = Number(req.params.userId)

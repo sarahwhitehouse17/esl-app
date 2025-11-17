@@ -4,7 +4,6 @@ import goalsRoutes from './routes/goalsRoutes'
 import lessonsRoutes from './routes/lessonsRoutes'
 import wordsRoutes from './routes/wordsRoutes'
 import attemptsRoutes from './routes/attemptsRoutes'
-import prisma from './prisma'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -33,6 +32,9 @@ app.use('/api', goalsRoutes)
 
 app.use('/api', attemptsRoutes)
 
+app.get('/', (req, res) => {
+  res.send('API is running...')
+})
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`)

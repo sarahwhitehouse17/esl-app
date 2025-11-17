@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
-import { findUserById } from '../data/usersRepository'
+// import { findUserById } from '../data/usersRepository'
+import { DEFAULT_USER_ID } from '../defaultUser'
 import { getLessonByUserId } from '../data/lessonsRepository'
 import * as AttemptsRepo from '../data/attemptsRepository'
 
@@ -8,7 +9,7 @@ import * as AttemptsRepo from '../data/attemptsRepository'
 // app.post('/api/users/:userId/lessons/:lessonId/attempts',
 
 export const createAttempt = async (req: Request, res: Response) => {
-  const userId = Number(req.params.userId)
+  const userId = DEFAULT_USER_ID
   const lessonId = Number(req.params.lessonId)
   const { correct } = req.body
 
@@ -17,11 +18,6 @@ export const createAttempt = async (req: Request, res: Response) => {
       return res
         .status(400)
         .json({ error: `Field 'correct' must be true or false.` })
-    }
-
-    const user = await findUserById(userId)
-    if (!user) {
-      return res.status(404).json({ error: 'No user found' })
     }
 
     const lesson = await getLessonByUserId(userId, lessonId)
@@ -56,15 +52,10 @@ export const createAttempt = async (req: Request, res: Response) => {
 }
 
 export const getPassed = async (req: Request, res: Response) => {
-  const userId = Number(req.params.userId)
+  const userId = DEFAULT_USER_ID
   const lessonId = Number(req.params.lessonId)
 
   try {
-    const user = await findUserById(userId)
-
-    if (!user) {
-      return res.status(404).json({ error: `User couldn't be found` })
-    }
     const lesson = await getLessonByUserId(userId, lessonId)
 
     if (!lesson) {
@@ -86,16 +77,10 @@ export const getPassed = async (req: Request, res: Response) => {
 //   '/api/users/:userId/lessons/:lessonId/attempts/remaining',
 
 export const getRemainingAttempts = async (req: Request, res: Response) => {
-  const userId = Number(req.params.userId)
+  const userId = DEFAULT_USER_ID
   const lessonId = Number(req.params.lessonId)
 
   try {
-    const user = await findUserById(userId)
-
-    if (!user) {
-      return res.status(404).json({ error: 'No user found' })
-    }
-
     const lesson = await getLessonByUserId(userId, lessonId)
 
     if (!lesson) {

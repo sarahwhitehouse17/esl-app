@@ -4,7 +4,7 @@ import { getGoals, createGoal } from '../controllers/goalsController'
 
 const router = express.Router()
 
-router.get('/users/:userId/goals', getGoals)
-router.post('/users/:userId/goals', createGoal)
+router.get('/goals', getGoals)
+router.post('/goals', createGoal)
 
 export default router

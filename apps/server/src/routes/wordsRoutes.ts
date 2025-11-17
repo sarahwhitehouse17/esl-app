@@ -4,7 +4,7 @@ import { getWords, createWord } from '../controllers/wordsController'
 
 const router = express.Router()
 
-router.get('/users/:userId/lessons/:lessonId/words', getWords)
-router.post('/users/:userId/lessons/:lessonId/words', createWord)
+router.get('/lessons/:lessonId/words', getWords)
+router.post('/lessons/:lessonId/words', createWord)
 
 export default router
