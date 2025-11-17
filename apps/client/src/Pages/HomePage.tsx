@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function HomePage() {
-  const goals = [
+  const allGoals = [
     "To improve confidence when speaking",
     "To improve grammatical accuracy",
     "To improve pronunciation",
@@ -11,71 +11,79 @@ export default function HomePage() {
     "To adopt more idiomatic language and improve fluency",
   ];
 
-  const [goal1, setGoal1] = useState("");
-  const [goal2, setGoal2] = useState("");
-  const [goal3, setGoal3] = useState("");
-
+  const [goals, setGoals] = useState<string[]>([]);
   const [message, setMessage] = useState("");
 
-  const handleGoalSelect = async (value, setGoalFn) => {
-    setGoalFn(value);
-    setMessage("");
+  // Load existing goals from backend
+  useEffect(() => {
+    async function load() {
+      const res = await fetch("/api/goals");
+      const data = await res.json();
+      if (res.ok) {
+        setGoals(data.map((g: any) => g.goalTitle));
+      }
+    }
+    load();
+  }, []);
 
+  // Add a selected goal
+  async function handleSelect(value: string, index: number) {
     if (!value) return;
 
-    const response = await fetch("/api/goals", {
+    const res = await fetch("/api/goals", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ goalTitle: value }),
     });
 
-    const data = await response.json();
+    const data = await res.json();
 
-    if (!response.ok) {
+    if (!res.ok) {
       setMessage(data.error);
-    } else {
-      setMessage("Goal added!");
+      return;
     }
-  };
+
+    const copy = [...goals];
+    copy[index] = value;
+    setGoals(copy);
+    setMessage("Goal added!");
+  }
+
+  // Remove already-selected goals from options
+  function optionsForDropdown() {
+    return allGoals.filter((g) => !goals.includes(g));
+  }
 
   return (
     <div>
       <h1>Hello Elena ✌️✨</h1>
-      <h3>Select your language learning goals</h3>
-      <select
-        value={goal1}
-        onChange={(e) => handleGoalSelect(e.target.value, setGoal1)}
-      >
-        <option value="">--choose a goal--</option>
-        {goals.map((goal) => (
-          <option key={goal} value={goal}>
-            {goal}
-          </option>
-        ))}
-      </select>
-      <select
-        value={goal2}
-        onChange={(e) => handleGoalSelect(e.target.value, setGoal2)}
-      >
-        <option value="">--choose a goal--</option>
-        {goals.map((goal) => (
-          <option key={goal} value={goal}>
-            {goal}
-          </option>
-        ))}
-      </select>
-      <select
-        value={goal3}
-        onChange={(e) => handleGoalSelect(e.target.value, setGoal3)}
-      >
-        <option value="">--choose a goal--</option>
-        {goals.map((goal) => (
-          <option key={goal} value={goal}>
-            {goal}
-          </option>
-        ))}
-      </select>
+
+      <h3>Your selected goals:</h3>
+      {goals.map((g, i) => (
+        <p key={i}>• {g}</p>
+      ))}
+
+      {/* Only show form if the user has fewer than 3 goals */}
+      {goals.length < 3 && (
+        <div>
+          <h3>Select a new goal:</h3>
+
+          <select
+            value=""
+            onChange={(e) => handleSelect(e.target.value, goals.length)}
+          >
+            <option value="">-- choose a goal --</option>
+
+            {optionsForDropdown().map((goal) => (
+              <option key={goal} value={goal}>
+                {goal}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {message && <p>{message}</p>}
     </div>
-  );
-}
+  ); // ← closes return
+} // ← closes HomePage()
