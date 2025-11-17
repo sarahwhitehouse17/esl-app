@@ -1,10 +1,17 @@
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./Pages/LandingPage";
+import HomePage from "./Pages/HomePage";
+import ExercisesPage from "./Pages/Exercises";
 
 function App() {
   return (
-    <>
-      <h1>ESLapp ✌️✨</h1>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/homepage" element={<HomePage />} />
+        <Route path="/exercises" element={<ExercisesPage />} />
+      </Routes>
+    </Router>
   );
 }
 
