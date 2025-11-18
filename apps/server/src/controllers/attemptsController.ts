@@ -97,3 +97,19 @@ export const getRemainingAttempts = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Server error. Please try again.' })
   }
 }
+
+export const getAttemptCountController = async (
+  req: Request,
+  res: Response
+) => {
+  const userId = DEFAULT_USER_ID
+  const lessonId = Number(req.params.lessonId)
+
+  try {
+    const count = await AttemptsRepo.getAttemptCount(userId, lessonId)
+    return res.status(200).json({ attemptCount: count })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ error: 'Error fetching attempt count' })
+  }
+}
