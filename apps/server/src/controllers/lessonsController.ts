@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import * as lessonsRepo from '../data/lessonsRepository'
-import { DEFAULT_LESSON_ID, DEFAULT_USER_ID } from '../defaultUser'
+import { DEFAULT_USER_ID } from '../defaultUser'
 
 export const createLesson = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
@@ -31,7 +31,7 @@ export const getAllLessons = async (req: Request, res: Response) => {
 
 export const getLesson = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
+  const lessonId = Number(req.params.lessonId)
 
   try {
     const lesson = await lessonsRepo.getLessonByUserId(userId, lessonId)

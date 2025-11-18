@@ -5,12 +5,12 @@ import { DEFAULT_LESSON_ID } from "../defaultLesson";
 1. Should I highlight in UI if a definition has already been selected (Probably!)
 2. Navigation bar
 3. Delete log in page??
-4. Fix api route? Currently hard-coding things like lesson plan
 5. Make exercises page more readable!
 6. Integrate a dictionaryAPI call... this would be more on the teacher side though..currently adding words via Bruno
 7. Style the page!
 8. Add another page with Sudoku??
 9. Using vite config to link with server
+10. answers are now on the database, but not persisting in the UI...
 */
 
 type Word = {
@@ -46,6 +46,22 @@ export default function MatchingExercise() {
     }
 
     loadWords();
+  }, [lessonId]);
+
+  useEffect(() => {
+    async function loadPreviousAttempt() {
+      const res = await fetch(`api/lessons/${lessonId}/attempts/last`);
+      const data = await res.json();
+
+      if (data.answers) {
+        setAnswers(data.answers);
+        setAttemptCount(data.attemptCount);
+      }
+      if (data.correct === true) {
+        setMessage("You already passed this exercise!");
+      }
+    }
+    loadPreviousAttempt();
   }, [lessonId]);
 
   useEffect(() => {
@@ -120,12 +136,14 @@ export default function MatchingExercise() {
       body: JSON.stringify({
         correct: allCorrect,
         attemptNum,
+        answers,
       }),
     });
   }
 
   return (
     <div>
+      <button>Select lesson</button>
       <h2>Match the words to their definitions</h2>
 
       <p>

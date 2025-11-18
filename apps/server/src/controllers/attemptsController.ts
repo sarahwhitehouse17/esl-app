@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { DEFAULT_LESSON_ID, DEFAULT_USER_ID } from '../defaultUser'
+import { DEFAULT_USER_ID } from '../defaultUser'
 import { getLessonByUserId } from '../data/lessonsRepository'
 import * as AttemptsRepo from '../data/attemptsRepository'
 
@@ -9,8 +9,8 @@ import * as AttemptsRepo from '../data/attemptsRepository'
 
 export const createAttempt = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
-  const { correct } = req.body
+  const lessonId = Number(req.params.lessonId)
+  const { correct, answers } = req.body
 
   console.log('Checking', { userId, lessonId, correct })
   try {
@@ -34,15 +34,12 @@ export const createAttempt = async (req: Request, res: Response) => {
         .json({ error: 'Maximum number of attempts reached' })
     }
 
-    // const attemptNum = count + 1
-
-    //before refactoring, correct was default set to 'true'
-
     const attempt = await AttemptsRepo.createAttempt(
       userId,
       lessonId,
       count + 1,
-      correct
+      correct,
+      answers
     )
     return res.status(201).json(attempt)
   } catch (err) {
@@ -53,7 +50,7 @@ export const createAttempt = async (req: Request, res: Response) => {
 
 export const getPassed = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
+  const lessonId = Number(req.params.lessonId)
 
   try {
     const lesson = await getLessonByUserId(userId, lessonId)
@@ -78,7 +75,7 @@ export const getPassed = async (req: Request, res: Response) => {
 
 export const getRemainingAttempts = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
+  const lessonId = Number(req.params.lessonId)
 
   try {
     const lesson = await getLessonByUserId(userId, lessonId)
@@ -102,7 +99,7 @@ export const getAttemptCountController = async (
   res: Response
 ) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
+  const lessonId = Number(req.params.lessonId)
 
   try {
     const count = await AttemptsRepo.getAttemptCount(userId, lessonId)

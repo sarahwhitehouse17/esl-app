@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import { getLessonByUserId } from '../data/lessonsRepository'
 import * as WordsRepo from '../data/wordsRepository'
-import { DEFAULT_LESSON_ID, DEFAULT_USER_ID } from '../defaultUser'
+import { DEFAULT_USER_ID } from '../defaultUser'
 
 //app.get('/api/users/:userId/lessons/:lessonId/words',
 
 export const getWords = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
+  const lessonId = Number(req.params.lessonId)
 
   try {
     const lesson = await getLessonByUserId(userId, lessonId)
@@ -27,7 +27,7 @@ export const getWords = async (req: Request, res: Response) => {
 //app.post('/api/users/:userId/lessons/:lessonId/words',
 export const createWord = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
-  const lessonId = DEFAULT_LESSON_ID
+  const lessonId = Number(req.params.lessonId)
   const { term, definition } = req.body
 
   try {

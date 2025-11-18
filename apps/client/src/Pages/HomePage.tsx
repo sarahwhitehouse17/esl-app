@@ -82,6 +82,14 @@ export default function HomePage() {
           </select>
         </div>
       )}
+      <h3>Total number of hours studied</h3>
+      <h4>96 hours</h4>
+      <h3>Your areas of foucs over the next four weeks</h3>
+      <ul>
+        <li>Add target</li>
+        <li>Add target</li> <li>Add target</li> <li>Add target</li>
+      </ul>
+      <h4>Your current level: B2.4 - Intermediate</h4>
 
       {message && <p>{message}</p>}
     </div>

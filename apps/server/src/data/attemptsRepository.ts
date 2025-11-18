@@ -10,10 +10,11 @@ export const createAttempt = (
   userId: number,
   lessonId: number,
   attemptNum: number,
-  correct: boolean
+  correct: boolean,
+  answers: object
 ) => {
   return prisma.attempt.create({
-    data: { userId, lessonId, attemptNum, correct },
+    data: { userId, lessonId, attemptNum, correct, answers },
   })
 }
 
