@@ -22,7 +22,7 @@ export default function MatchingExercise() {
   const [definitions, setDefinitions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<{ [id: number]: string }>({});
   const [correct, setCorrect] = useState<{ [id: number]: boolean }>({});
-  const [attemptCount, setAttemptCount] = useState(0);
+  const [attemptCount, setAttemptCount] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const hasPassed = Boolean(message);
   const lessonId = DEFAULT_LESSON_ID; //checked and lessonId definitely working
@@ -46,24 +46,34 @@ export default function MatchingExercise() {
   }, [lessonId]);
 
   useEffect(() => {
-    async function loadPreviousAttempt() {
-      const res = await fetch(`/api/lessons/${lessonId}/attempts/last`); //not found
-      const data = await res.json();
+    async function loadInitialData() {
+      const [lastRes, countRes] = await Promise.all([
+        fetch(`/api/lessons/${lessonId}/attempts/last`),
+        fetch(`/api/lessons/${lessonId}/attempts/count`),
+      ]);
 
-      console.log(data, "logging data previous attempt"); //logs 3
+      const lastData = await lastRes.json();
+      const countData = await countRes.json();
 
-      if (data.answers) {
-        setAnswers(data.answers);
-        setAttemptCount(data.attemptCount);
+      console.log("Last attempt:", lastData);
+      console.log("Count:", countData);
+
+      // ❗ Always use real DB count
+      setAttemptCount(countData.attemptCount);
+
+      // Restore previous answers (if any)
+      if (lastData.answers) {
+        setAnswers(lastData.answers);
       }
-      if (data.correct === true) {
+
+      // If it was already passed
+      if (lastData.correct === true) {
         setMessage("You already passed this exercise!");
       }
     }
-    loadPreviousAttempt();
-  }, [lessonId]);
 
-  console.log(answers); //empty object
+    loadInitialData();
+  }, [lessonId]);
 
   useEffect(() => {
     async function loadPassed() {
@@ -76,21 +86,6 @@ export default function MatchingExercise() {
     }
     loadPassed();
   }, [lessonId]);
-
-  useEffect(() => {
-    async function loadAttemptCount() {
-      const res = await fetch(
-        `http://localhost:8080/api/lessons/${lessonId}/attempts/count`
-      );
-      const data = await res.json();
-      // console.log(data);
-      // console.log(data.lessonId);
-      // console.log(data.answers);
-      setAttemptCount(data.attemptCount); // Overwrite React state with DB value
-    }
-
-    loadAttemptCount();
-  }, [lessonId]); //message - saying hook has a missing dependency...
 
   function handleSelect(word: Word, selectedDefinition: string) {
     if (attemptCount >= maxAttempts) return;
@@ -146,6 +141,17 @@ export default function MatchingExercise() {
     });
   }
 
+  if (attemptCount === null) {
+    return (
+      <div>
+        <p className="text-center p-6">Loading exercise...</p>
+      </div>
+    );
+  }
+
+  const requiredIds = words.map((word) => word.id);
+  const allAnswered = requiredIds.every((id) => answers[id]);
+
   return (
     <div className="max-w-2xl mx-auto p-6">
       <button className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition">
@@ -192,7 +198,7 @@ export default function MatchingExercise() {
 
           {correct[word.id] !== undefined && (
             <p className="mt-2 text-sm font-medium">
-              {correct[word.id] ? "text-green-600" : "text-red-600"}
+              {correct[word.id] ? "Correct" : "Incorrect"}
             </p>
           )}
         </div>
@@ -203,12 +209,21 @@ export default function MatchingExercise() {
         disabled={
           attemptCount >= maxAttempts ||
           words.length === 0 ||
-          message.length > 0
+          message.length > 0 ||
+          !allAnswered
         }
-        className="rounded-md bg-green-400 hover: bg-green-700 text-white py02 opacity-50 px-4"
+        className="rounded-md bg-green-700 text-white py02 opacity-50 px-4"
       >
-        Submit answers
+        {" "}
+        Submit
       </button>
+      {!allAnswered && (
+        <div>
+          <p className="text-center mt-4">
+            Please select a definition for every word before submitting.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
