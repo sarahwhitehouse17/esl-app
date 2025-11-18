@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 
+
+/*
+1. Should I highlight in UI if a definition has already been selected (Probably!)
+2. Navigation bar
+3. Get log in page??
+4. Fix api route? Currently hard-coding things like lesson plan
+*/
+
 type Word = {
   id: number;
   term: string;
@@ -137,7 +145,7 @@ export default function MatchingExercise() {
           <select
             value={answers[word.id] || ""}
             onChange={(e) => handleSelect(word, e.target.value)}
-            disabled={attemptCount >= maxAttempts}
+            disabled={attemptCount >= maxAttempts || hasPassed}
           >
             <option value="">-- choose definition --</option>
 
