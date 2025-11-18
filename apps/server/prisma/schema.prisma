@@ -57,6 +57,7 @@ model Attempt {
   lessonId   Int
   attemptNum Int
   correct    Boolean
+  answers    Json?
   createdAt  DateTime @default(now())
 
   lesson Lesson @relation(fields: [lessonId], references: [id])
