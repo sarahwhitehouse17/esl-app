@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-
+import { DEFAULT_LESSON_ID } from "../defaultLesson";
 
 /*
 1. Should I highlight in UI if a definition has already been selected (Probably!)
 2. Navigation bar
-3. Get log in page??
+3. Delete log in page??
 4. Fix api route? Currently hard-coding things like lesson plan
+5. Make exercises page more readable!
+6. Integrate a dictionaryAPI call... this would be more on the teacher side though..currently adding words via Bruno
+7. Style the page!
+8. Add another page with Sudoku??
+9. Using vite config to link with server
 */
 
 type Word = {
@@ -23,12 +28,13 @@ export default function MatchingExercise() {
   const [attemptCount, setAttemptCount] = useState(0);
   const [message, setMessage] = useState("");
   const hasPassed = Boolean(message);
+  const lessonId = DEFAULT_LESSON_ID;
 
   const maxAttempts = 3;
 
   useEffect(() => {
     async function loadWords() {
-      const res = await fetch("/api/lessons/3/words"); //hardcoded lesson for now
+      const res = await fetch(`/api/lessons/${lessonId}/words`); //hardcoded lesson for now
       const data: Word[] = await res.json();
       setWords(data);
 
@@ -40,11 +46,11 @@ export default function MatchingExercise() {
     }
 
     loadWords();
-  }, []);
+  }, [lessonId]);
 
   useEffect(() => {
     async function loadPassed() {
-      const res = await fetch("/api/lessons/3/attempts/passed");
+      const res = await fetch(`/api/lessons/${lessonId}/attempts/passed`);
       const data = await res.json();
 
       if (data.passed === true) {
@@ -52,17 +58,18 @@ export default function MatchingExercise() {
       }
     }
     loadPassed();
-  }, []);
+  }, [lessonId]);
 
   useEffect(() => {
     async function loadAttemptCount() {
-      const res = await fetch("/api/lessons/3/attempts/count");
+      const res = await fetch(`/api/lessons/${lessonId}/attempts/count`);
       const data = await res.json();
+      console.log(data.lessonId);
       setAttemptCount(data.attemptCount); // Overwrite React state with DB value
     }
 
     loadAttemptCount();
-  }, []);
+  }, [lessonId]); //message - saying hook has a missing dependency...
 
   function handleSelect(word: Word, selectedDefinition: string) {
     if (attemptCount >= maxAttempts) return;
@@ -107,7 +114,7 @@ export default function MatchingExercise() {
       setMessage("Congratulations - you've passed all the exercises!");
     }
 
-    await fetch("/api/lessons/3/attempts", {
+    await fetch(`/api/lessons/${lessonId}/attempts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

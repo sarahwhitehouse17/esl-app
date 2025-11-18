@@ -13,9 +13,9 @@ export const getAllLessonsByUserId = (userId: number) => {
   })
 }
 
-export const getLessonByUserId = (userId: number, id: number) => {
+export const getLessonByUserId = (userId: number, lessonId: number) => {
   return prisma.lesson.findFirst({
-    where: { userId, id },
+    where: { userId, id: lessonId },
     include: {
       words: true,
     },

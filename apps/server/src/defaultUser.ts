@@ -1,3 +1,3 @@
 export const DEFAULT_USER_ID = 2
 
-//lesonId is 4
+export const DEFAULT_LESSON_ID = 3
