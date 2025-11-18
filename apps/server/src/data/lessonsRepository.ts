@@ -9,7 +9,7 @@ export const createNewLesson = (userId: number, title: string) => {
 export const getAllLessonsByUserId = (userId: number) => {
   return prisma.lesson.findMany({
     where: { userId },
-    orderBy: { id: 'asc' }, // optional but nice
+    orderBy: { id: 'asc' }, // optional but nicegi
   })
 }
 

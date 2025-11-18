@@ -147,29 +147,33 @@ export default function MatchingExercise() {
   }
 
   return (
-    <div>
-      <button>Select lesson</button>
-      <h2>Match the words to their definitions</h2>
+    <div className="max-w-2xl mx-auto p-6">
+      <button className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition">
+        <em>Select lesson</em>
+      </button>
+      <h2 className="text-2xl font-semibold text-center mb-4">
+        Match the words to their definitions
+      </h2>
 
-      <p>
+      <p className="text-sm text-center italic mb-4">
         Attempts used: {attemptCount} / {maxAttempts}
       </p>
 
       {attemptCount >= maxAttempts && !hasPassed && (
         <div>
-          <p style={{ color: "red" }}>
+          <p className="text-red-600 text-center font-medium">
             You are out of attempts for this exercise.
           </p>
         </div>
       )}
       {hasPassed && (
         <div>
-          <p style={{ color: "green" }}>{message}</p>
+          <p className="text-green-600 text-center font-medium">{message}</p>
         </div>
       )}
 
       {words.map((word) => (
-        <div key={word.id} style={{ marginBottom: "1.5rem" }}>
+        <div key={word.id} className="mb-4 p-4 bg-gray-50 rounded-md shadow-sm">
           <strong>{word.term}</strong>
 
           <select
@@ -187,13 +191,8 @@ export default function MatchingExercise() {
           </select>
 
           {correct[word.id] !== undefined && (
-            <p
-              style={{
-                color: correct[word.id] ? "green" : "red",
-                marginTop: "0.2rem",
-              }}
-            >
-              {correct[word.id] ? "Correct!" : "Incorrect"}
+            <p className="mt-2 text-sm font-medium">
+              {correct[word.id] ? "text-green-600" : "text-red-600"}
             </p>
           )}
         </div>
@@ -206,6 +205,7 @@ export default function MatchingExercise() {
           words.length === 0 ||
           message.length > 0
         }
+        className="rounded-md bg-green-400 hover: bg-green-700 text-white py02 opacity-50 px-4"
       >
         Submit answers
       </button>

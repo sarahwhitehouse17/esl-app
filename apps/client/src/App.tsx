@@ -3,6 +3,8 @@ import LandingPage from "./Pages/LandingPage";
 import HomePage from "./Pages/HomePage";
 import ExercisesPage from "./Pages/Exercises";
 
+
+
 function App() {
   return (
     <Router>
