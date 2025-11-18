@@ -197,7 +197,11 @@ export default function MatchingExercise() {
           </select>
 
           {correct[word.id] !== undefined && (
-            <p className="mt-2 text-sm font-medium">
+            <p
+              className={`mt-2 text-sm font-medium ${
+                correct[word.id] ? "bg-green-500" : "bg-red-500"
+              }`}
+            >
               {correct[word.id] ? "Correct" : "Incorrect"}
             </p>
           )}
@@ -220,7 +224,7 @@ export default function MatchingExercise() {
       {!allAnswered && (
         <div>
           <p className="text-center mt-4">
-            Please select a definition for every word before submitting.
+            Please select an answer for every word before submitting.
           </p>
         </div>
       )}
