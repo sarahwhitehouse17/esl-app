@@ -3,10 +3,6 @@ import { DEFAULT_USER_ID } from '../defaultUser'
 import { getLessonByUserId } from '../data/lessonsRepository'
 import * as AttemptsRepo from '../data/attemptsRepository'
 
-//getAttempts //createAttmpt
-
-// app.post('/api/users/:userId/lessons/:lessonId/attempts',
-
 export const createAttempt = async (req: Request, res: Response) => {
   const userId = DEFAULT_USER_ID
   const lessonId = Number(req.params.lessonId)
@@ -109,3 +105,22 @@ export const getAttemptCountController = async (
     return res.status(500).json({ error: 'Error fetching attempt count' })
   }
 }
+
+export const getLastAttempt = async (req: Request, res: Response) => {
+  const userId = DEFAULT_USER_ID
+  const lessonId = Number(req.params.lessonId)
+
+  try {
+    const lastAttempt = await AttemptsRepo.getLastAttempt(userId, lessonId)
+
+    if (!lastAttempt) {
+      return res.status(200).json({ message: 'No previous attempt found' })
+    }
+    return res.status(201).json(lastAttempt)
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ error: 'Error fetching last attempt' })
+  }
+}
+
+//get last attempt --> answers + correct --> Point route to this endpoint; /last

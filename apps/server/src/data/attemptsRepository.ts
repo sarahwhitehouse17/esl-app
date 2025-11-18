@@ -18,6 +18,15 @@ export const createAttempt = (
   })
 }
 
+//getAttempt -- answers/correct
+
+export const getLastAttempt = (userId: number, lessonId: number) => {
+  return prisma.attempt.findFirst({
+    where: { userId, lessonId },
+    orderBy: { attemptNum: 'desc' },
+  })
+}
+
 export const getPassedCount = (userId: number, lessonId: number) => {
   return prisma.attempt.count({
     where: {

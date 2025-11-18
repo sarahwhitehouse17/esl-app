@@ -4,13 +4,10 @@ import { DEFAULT_LESSON_ID } from "../defaultLesson";
 /*
 1. Should I highlight in UI if a definition has already been selected (Probably!)
 2. Navigation bar
-3. Delete log in page??
+3. Delete log in page?? Mock log-in if time
 5. Make exercises page more readable!
-6. Integrate a dictionaryAPI call... this would be more on the teacher side though..currently adding words via Bruno
 7. Style the page!
 8. Add another page with Sudoku??
-9. Using vite config to link with server
-10. answers are now on the database, but not persisting in the UI...
 */
 
 type Word = {
@@ -28,7 +25,7 @@ export default function MatchingExercise() {
   const [attemptCount, setAttemptCount] = useState(0);
   const [message, setMessage] = useState("");
   const hasPassed = Boolean(message);
-  const lessonId = DEFAULT_LESSON_ID;
+  const lessonId = DEFAULT_LESSON_ID; //checked and lessonId definitely working
 
   const maxAttempts = 3;
 
@@ -50,8 +47,10 @@ export default function MatchingExercise() {
 
   useEffect(() => {
     async function loadPreviousAttempt() {
-      const res = await fetch(`api/lessons/${lessonId}/attempts/last`);
+      const res = await fetch(`/api/lessons/${lessonId}/attempts/last`); //not found
       const data = await res.json();
+
+      console.log(data, "logging data previous attempt"); //logs 3
 
       if (data.answers) {
         setAnswers(data.answers);
@@ -63,6 +62,8 @@ export default function MatchingExercise() {
     }
     loadPreviousAttempt();
   }, [lessonId]);
+
+  console.log(answers); //empty object
 
   useEffect(() => {
     async function loadPassed() {
@@ -78,9 +79,13 @@ export default function MatchingExercise() {
 
   useEffect(() => {
     async function loadAttemptCount() {
-      const res = await fetch(`/api/lessons/${lessonId}/attempts/count`);
+      const res = await fetch(
+        `http://localhost:8080/api/lessons/${lessonId}/attempts/count`
+      );
       const data = await res.json();
-      console.log(data.lessonId);
+      // console.log(data);
+      // console.log(data.lessonId);
+      // console.log(data.answers);
       setAttemptCount(data.attemptCount); // Overwrite React state with DB value
     }
 
@@ -115,7 +120,7 @@ export default function MatchingExercise() {
 
     // Save summary attempt to backend
     await saveAttemptToBackend(correctnessMap, nextAttemptNum);
-    console.log(correctnessMap, nextAttemptNum);
+    // console.log(correctnessMap, nextAttemptNum);
   }
 
   async function saveAttemptToBackend(
@@ -172,7 +177,7 @@ export default function MatchingExercise() {
             onChange={(e) => handleSelect(word, e.target.value)}
             disabled={attemptCount >= maxAttempts || hasPassed}
           >
-            <option value="">-- choose definition --</option>
+            <option value={""}>-- choose definition --</option>
 
             {definitions.map((def) => (
               <option key={def} value={def}>
