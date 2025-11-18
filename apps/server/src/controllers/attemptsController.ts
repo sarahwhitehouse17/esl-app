@@ -13,6 +13,7 @@ export const createAttempt = async (req: Request, res: Response) => {
   const lessonId = Number(req.params.lessonId)
   const { correct } = req.body
 
+  console.log('Checking', { userId, lessonId, correct })
   try {
     if (typeof correct !== 'boolean') {
       return res
