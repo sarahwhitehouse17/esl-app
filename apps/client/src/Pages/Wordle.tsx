@@ -3,9 +3,16 @@ import WORDS from "../MockData/words.json";
 import wordle from "../Components/WordleChecker";
 
 function Wordle() {
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const [guesses, setGuesses] = useState<string[]>(() => {
+    const saved = localStorage.getItem("wordleGuesses");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [currentGuess, setCurrentGuess] = useState("");
-  const [word] = useState<string>(() => {
+  const [word, setWord] = useState(() => {
+    const saved = localStorage.getItem("wordleWord");
+    if (saved) {
+      return saved;
+    }
     return WORDS[Math.floor(Math.random() * WORDS.length)];
   });
   const [guessResult, setResult] = useState<string[][]>([]);
@@ -26,6 +33,11 @@ function Wordle() {
     }
   }
 
+  useEffect(() => {
+    localStorage.setItem("wordleGuesses", JSON.stringify(guesses));
+    localStorage.setItem("wordleWord", word);
+  }, [guesses, word]);
+
   function checkLetters(guess: string) {
     return wordle(guess, word);
   }
@@ -38,6 +50,13 @@ function Wordle() {
       else if (colour === "Green") currentProgress += "🟩";
     }
     return currentProgress;
+  }
+
+  function resetGame() {
+    localStorage.removeItem("wordleGuesses");
+    localStorage.removeItem("wordleWord");
+
+    window.location.reload();
   }
 
   useEffect(() => {
@@ -107,6 +126,13 @@ function Wordle() {
           <p>Today's wordle of the day is: {word}</p>
           <p>Word type: {firstWordType}</p>
           <p>Definition: {wordDefinition}</p>
+          <button
+            onClick={resetGame}
+            type="button"
+            className="button border-black rounded"
+          >
+            Play again
+          </button>
         </div>
       )}
     </div>

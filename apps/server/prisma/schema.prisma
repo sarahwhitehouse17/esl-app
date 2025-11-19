@@ -20,6 +20,7 @@ model User {
   lessons Lesson[]
   attempts Attempt[]
   goals Goal[]
+  wordle Wordle[]
   createdAt   DateTime @default(now())
 }
 
@@ -48,6 +49,7 @@ model Lesson {
   words Word[]
   attempts Attempt[]
   userId Int
+  wordle Wordle? 
   user User @relation (fields: [userId], references: [id])
 }
 
@@ -58,6 +60,19 @@ model Attempt {
   attemptNum Int
   correct    Boolean
   answers    Json?
+  createdAt  DateTime @default(now())
+
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Wordle {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  lessonId   Int @unique
+  guesses    Json?
+  attemptNum Int
+  correct    Boolean
   createdAt  DateTime @default(now())
 
   lesson Lesson @relation(fields: [lessonId], references: [id])
