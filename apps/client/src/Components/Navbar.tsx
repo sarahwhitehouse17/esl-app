@@ -13,6 +13,9 @@ export default function Navbar() {
         <Link to="/exercises" className="hover:text-green-500">
           Exercises
         </Link>
+        <Link to="/wordle" className="hover:text-green-500">
+          Wordle
+        </Link>
       </div>
     </nav>
   );

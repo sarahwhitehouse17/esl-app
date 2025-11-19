@@ -3,11 +3,10 @@ import { DEFAULT_LESSON_ID } from "../defaultLesson";
 
 /*
 1. Should I highlight in UI if a definition has already been selected (Probably!)
-2. Navigation bar
-3. Delete log in page?? Mock log-in if time
-5. Make exercises page more readable!
-7. Style the page!
-8. Add another page with Sudoku??
+2. Delete log in page?? Mock log-in if time
+3. Make exercises page more readable!
+4. Add another page with Sudoku??
+5. Move some parts of exercises page somewhere else?
 */
 
 type Word = {
