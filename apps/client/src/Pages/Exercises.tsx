@@ -57,7 +57,6 @@ export default function MatchingExercise() {
       console.log("Last attempt:", lastData);
       console.log("Count:", countData);
 
-      // ❗ Always use real DB count
       setAttemptCount(countData.attemptCount);
 
       // Restore previous answers (if any)

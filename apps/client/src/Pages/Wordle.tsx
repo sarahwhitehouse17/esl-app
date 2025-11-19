@@ -51,7 +51,7 @@ function Wordle() {
   const passed = lastResult?.every((colour) => colour === "Green");
 
   return (
-    <div className="play max-w-2xl mx-auto p-6 mt-7">
+    <div className="play max-w-2xl mx-auto p-6 mt-7 bg-neutral-primary-soft block border-gray-100 rounded-base shadow-xs hover:bg-neutral-secondary-medium items-center bg-gray-100 rounded">
       <h1 className="text-center">WORDLE</h1>
 
       <div className="previous-guesses text-center">
@@ -76,7 +76,12 @@ function Wordle() {
             pattern="[A-Z]{5}"
             style={{ textTransform: "uppercase" }}
           />
-          <button type="submit">Submit</button>
+          <button
+            type="submit"
+            className="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none rounded"
+          >
+            Submit
+          </button>
         </form>
       )}
       {guesses.length === 5 && !passed && (
