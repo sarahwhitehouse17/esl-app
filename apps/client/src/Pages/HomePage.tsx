@@ -55,42 +55,57 @@ export default function HomePage() {
   }
 
   return (
-    <div>
-      <h1>Hello Elena ✌️✨</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+      <h1 className="text-4xl font-bold mb-6">Hello Elena ✌️✨</h1>
+      <div className="flex flex-col md:flex-row w-full max-w-4xl gap-6">
+        {/*GOALS SECTION (LEFT)*/}
+        <div className="flex-1">
+          <h3 className="text-xl font-semibold mb-2">Your selected goals:</h3>
+          {goals.map((g, i) => (
+            <p key={i}>• {g}</p>
+          ))}
 
-      <h3>Your selected goals:</h3>
-      {goals.map((g, i) => (
-        <p key={i}>• {g}</p>
-      ))}
+          {/* Only show form if the user has fewer than 3 goals */}
+          {goals.length < 3 && (
+            <div className="mt-4">
+              <h3 className="text-lg font-medium mb-2">Select a new goal:</h3>
 
-      {/* Only show form if the user has fewer than 3 goals */}
-      {goals.length < 3 && (
-        <div>
-          <h3>Select a new goal:</h3>
+              <select
+                value=""
+                onChange={(e) => handleSelect(e.target.value, goals.length)}
+              >
+                <option value="">-- choose a goal --</option>
 
-          <select
-            value=""
-            onChange={(e) => handleSelect(e.target.value, goals.length)}
-          >
-            <option value="">-- choose a goal --</option>
-
-            {optionsForDropdown().map((goal) => (
-              <option key={goal} value={goal}>
-                {goal}
-              </option>
-            ))}
-          </select>
+                {optionsForDropdown().map((goal) => (
+                  <option key={goal} value={goal}>
+                    {goal}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
-      )}
-      <h3>Total number of hours studied</h3>
-      <h4>96 hours</h4>
-      <h3>Your areas of foucs over the next four weeks</h3>
-      <ul>
-        <li>Add target</li>
-        <li>Add target</li> <li>Add target</li> <li>Add target</li>
-      </ul>
-      <h4>Your current level: B2.4 - Intermediate</h4>
 
+        {/*STATS SECTION (RIGHT)*/}
+        <div className="flex-1 space-y-6">
+          <div className="bg-white shadow-md rounded-2xl p-6">
+            <h3>Total number of hours studied</h3>
+            <h4>96 hours</h4>
+          </div>
+
+          <div className="bg-white shadow-md rounded-2xl p-6">
+            <h3>Your areas of foucs over the next four weeks</h3>
+            <ul>
+              <li>Add target</li>
+              <li>Add target</li> <li>Add target</li> <li>Add target</li>
+            </ul>
+          </div>
+
+          <div className="bg-white shadow-md rounded-2xl p-4 text-center">
+            <h4>Your current level: B2.4 - Intermediate</h4>
+          </div>
+        </div>
+      </div>
       {message && <p>{message}</p>}
     </div>
   ); // ← closes return
