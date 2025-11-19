@@ -26,6 +26,8 @@ export default function HomePage() {
     load();
   }, []);
 
+  console.log(goals);
+
   // Add a selected goal
   async function handleSelect(value: string, index: number) {
     if (!value) return;
@@ -57,13 +59,25 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
       <h1 className="text-4xl font-bold mb-6">Hello Elena ✌️✨</h1>
-      <div className="flex flex-col md:flex-row w-full max-w-4xl gap-6">
+      <div className="flex flex-col md:flex-row w-full max-w-4xl gap-6 bg-white shadow-md rounded-2xl p-6">
         {/*GOALS SECTION (LEFT)*/}
         <div className="flex-1">
           <h3 className="text-xl font-semibold mb-2">Your selected goals:</h3>
+          {goals.length < 3 && <p>Make sure to select 3 goals</p>}
+
           {goals.map((g, i) => (
             <p key={i}>• {g}</p>
           ))}
+
+          <div className="mt-6 italic">
+            {goals.length === 3 && (
+              <p>
+                These are the goals we'll be focusing on.
+                <strong> Want to make any updates?</strong> Let me know and we
+                can review this in our next class to make sure we're on track.
+              </p>
+            )}
+          </div>
 
           {/* Only show form if the user has fewer than 3 goals */}
           {goals.length < 3 && (
@@ -89,24 +103,31 @@ export default function HomePage() {
         {/*STATS SECTION (RIGHT)*/}
         <div className="flex-1 space-y-6">
           <div className="bg-white shadow-md rounded-2xl p-6">
-            <h3>Total number of hours studied</h3>
+            <h3>
+              <strong>Total number of hours studied</strong>
+            </h3>
             <h4>96 hours</h4>
           </div>
 
           <div className="bg-white shadow-md rounded-2xl p-6">
-            <h3>Your areas of foucs over the next four weeks</h3>
+            <h3>
+              <strong>Your areas of focus over the next four weeks:</strong>
+            </h3>
             <ul>
+              <li>Deliver one presention on something you love</li>
+              <li>Practice using persuasive language in English</li>{" "}
               <li>Add target</li>
-              <li>Add target</li> <li>Add target</li> <li>Add target</li>
             </ul>
           </div>
 
           <div className="bg-white shadow-md rounded-2xl p-4 text-center">
-            <h4>Your current level: B2.4 - Intermediate</h4>
+            <h4>
+              <strong>Your current level: B2.4 - Intermediate</strong>
+            </h4>
           </div>
         </div>
       </div>
-      {message && <p>{message}</p>}
+      {/* {message && <p>{message}</p>} */}
     </div>
   ); // ← closes return
 } // ← closes HomePage()
