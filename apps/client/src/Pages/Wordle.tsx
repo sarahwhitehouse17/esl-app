@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import WORDS from "../MockData/words.json";
 import wordle from "../Components/WordleChecker";
 
 function Wordle() {
-  const [guesses, setGuesses] = useState<string[]>([]); //returns array of strings
+  const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [word] = useState<string>(() => {
-    //use a lazy initialiser...
     return WORDS[Math.floor(Math.random() * WORDS.length)];
   });
-  const [guessResult, setResult] = useState<string[][]>([]); //return array of arrays
+  const [guessResult, setResult] = useState<string[][]>([]);
+  const [definition, setDefinition] = useState<any[]>([]); // holds API data
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setCurrentGuess(e.target.value.toUpperCase());
@@ -25,29 +25,47 @@ function Wordle() {
       setCurrentGuess("");
     }
   }
+
   function checkLetters(guess: string) {
-    const result = wordle(guess, word); //updated from let
-    return result;
+    return wordle(guess, word);
   }
 
   function displayColours(result: string[]) {
-    //THINK THIS MIGHT NEED TO BE OBJECT/ARRAY
     let currentProgress = "";
     for (const colour of result) {
-      //message --> Colour is never changed. Change to const instead. Originally 'let'
-      if (colour === "Gray") {
-        currentProgress += "◼️";
-      } else if (colour === "Yellow") {
-        currentProgress += "🟨";
-      } else if (colour === "Green") {
-        currentProgress += "🟩";
-      }
+      if (colour === "Gray") currentProgress += "◼️";
+      else if (colour === "Yellow") currentProgress += "🟨";
+      else if (colour === "Green") currentProgress += "🟩";
     }
     return currentProgress;
   }
 
-  const lastResult = guessResult[guessResult.length - 1];
+  useEffect(() => {
+    async function getDefinition(word: string) {
+      const response = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+      );
+      const words = await response.json();
 
+      const result = words.flatMap((word: any) =>
+        word.meanings.flatMap((meaning: any) =>
+          meaning.definitions.map((definition: any) => ({
+            ...definition,
+            type: meaning.partOfSpeech,
+          }))
+        )
+      );
+
+      setDefinition(result);
+    }
+
+    getDefinition(word);
+  }, [word]);
+
+  const firstWordType = definition?.[0]?.type ?? "";
+  const wordDefinition = definition?.[0]?.definition ?? "";
+
+  const lastResult = guessResult[guessResult.length - 1];
   const passed = lastResult?.every((colour) => colour === "Green");
 
   return (
@@ -56,9 +74,8 @@ function Wordle() {
 
       <div className="previous-guesses text-center">
         {guessResult.map((result, i) => (
-          <div className="letter-spacing">
+          <div className="letter-spacing" key={i}>
             <p className="letter">{guesses[i]}</p>
-
             <p>{displayColours(result)}</p>
           </div>
         ))}
@@ -84,9 +101,12 @@ function Wordle() {
           </button>
         </form>
       )}
-      {guesses.length === 5 && !passed && (
+
+      {guesses.length === 5 && !passed && definition.length > 0 && (
         <div className="text-center pt-5">
-          Today's wordle of the day is: {word}
+          <p>Today's wordle of the day is: {word}</p>
+          <p>Word type: {firstWordType}</p>
+          <p>Definition: {wordDefinition}</p>
         </div>
       )}
     </div>
