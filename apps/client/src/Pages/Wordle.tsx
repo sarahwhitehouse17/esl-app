@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import WORDS from "../MockData/words.json";
+import WORDS from "../MockData/wordsNew.json";
 import wordle from "../Components/WordleChecker";
 
 function Wordle() {
@@ -119,11 +119,11 @@ function Wordle() {
               maxLength={5}
               required
               pattern="[A-Z]{5}"
-              className="border border-gray-300 rounded-md px-3 py-2 outline-none"
+              className="border border-gray-300 rounded-md px-3 py-1 outline-none mr-2"
             />
             <button
               type="submit"
-              className="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none rounded"
+              className="bg-blue-500 mt-5 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             >
               Submit
             </button>
