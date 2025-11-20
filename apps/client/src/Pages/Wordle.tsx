@@ -8,7 +8,7 @@ function Wordle() {
     return saved ? JSON.parse(saved) : [];
   });
   const [currentGuess, setCurrentGuess] = useState("");
-  const [word, setWord] = useState(() => {
+  const [word] = useState(() => {
     const saved = localStorage.getItem("wordleWord");
     if (saved) {
       return saved;
@@ -42,14 +42,12 @@ function Wordle() {
     return wordle(guess, word);
   }
 
-  function displayColours(result: string[]) {
-    let currentProgress = "";
-    for (const colour of result) {
-      if (colour === "Gray") currentProgress += "◼️";
-      else if (colour === "Yellow") currentProgress += "🟨";
-      else if (colour === "Green") currentProgress += "🟩";
-    }
-    return currentProgress;
+  function displayColours(result) {
+    return result.map((r) => {
+      if (r === "Green") return "bg-green-500";
+      if (r === "Yellow") return "bg-yellow-500";
+      return "bg-gray-500";
+    });
   }
 
   function resetGame() {
@@ -88,53 +86,82 @@ function Wordle() {
   const passed = lastResult?.every((colour) => colour === "Green");
 
   return (
-    <div className="play max-w-2xl mx-auto p-6 mt-7 bg-neutral-primary-soft block border-gray-100 rounded-base shadow-xs hover:bg-neutral-secondary-medium items-center bg-gray-100 rounded">
-      <h1 className="text-center">WORDLE</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="play mx-auto p-6 bg-neutral-primary-soft border-gray-100 rounded-base shadow-xs hover:bg-neutral-secondary-medium items-center bg-white-100 rounded md:flex-row w-full max-w-4xl bg-white rounded-2xl">
+        <h1 className="text-center text-2xl font-semibold mb-4">WORDLE</h1>
+        <div className="flex flex-col items-center gap-3">
+          {guessResult.map((result, i) => {
+            const colours = displayColours(result);
 
-      <div className="previous-guesses text-center">
-        {guessResult.map((result, i) => (
-          <div className="letter-spacing" key={i}>
-            <p className="letter">{guesses[i]}</p>
-            <p>{displayColours(result)}</p>
-          </div>
-        ))}
-      </div>
-
-      {guesses.length < 5 && !passed && (
-        <form onSubmit={handleSubmit} className="text-center">
-          <input
-            type="text"
-            value={currentGuess}
-            onChange={handleChange}
-            placeholder="Enter 5 letters"
-            maxLength={5}
-            required
-            pattern="[A-Z]{5}"
-            style={{ textTransform: "uppercase" }}
-          />
-          <button
-            type="submit"
-            className="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none rounded"
-          >
-            Submit
-          </button>
-        </form>
-      )}
-
-      {guesses.length === 5 && !passed && definition.length > 0 && (
-        <div className="text-center pt-5">
-          <p>Today's wordle of the day is: {word}</p>
-          <p>Word type: {firstWordType}</p>
-          <p>Definition: {wordDefinition}</p>
-          <button
-            onClick={resetGame}
-            type="button"
-            className="button border-black rounded"
-          >
-            Play again
-          </button>
+            return (
+              <div key={i} className="flex gap-2">
+                {guesses[i].split("").map((char, j) => (
+                  <div
+                    key={j}
+                    className={`w-10 h-10 flex items-center justify-center text-xl font-bold border
+              ${colours[j]}`}
+                  >
+                    {char}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
-      )}
+
+        {guesses.length < 5 && !passed && (
+          <form onSubmit={handleSubmit} className="text-center mt-5">
+            <input
+              type="text"
+              value={currentGuess}
+              onChange={handleChange}
+              placeholder="ENTER 4 LETTERS"
+              maxLength={5}
+              required
+              pattern="[A-Z]{5}"
+              className="border border-gray-300 rounded-md px-3 py-2 outline-none"
+            />
+            <button
+              type="submit"
+              className="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none rounded"
+            >
+              Submit
+            </button>
+          </form>
+        )}
+        {passed && (
+          <div className="text-center pt-5 rounded">
+            <p className="mt-5">
+              Well done on successfully getting today's word!
+            </p>
+            <p className="mt-5 text-lg font-semibold">{word}</p>
+            <p className="mt-5">Word type: {firstWordType}</p>
+            <p className="mt-5">Definition: {wordDefinition}</p>
+            <button
+              onClick={resetGame}
+              type="button"
+              className="bg-blue-500 mt-5 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            >
+              Play again
+            </button>
+          </div>
+        )}
+
+        {guesses.length === 5 && !passed && definition.length > 0 && (
+          <div className="text-center pt-5 rounded">
+            <p>Today's wordle of the day is: {word}</p>
+            <p className="mt-5">Word type: {firstWordType}</p>
+            <p className="mt-5">Definition: {wordDefinition}</p>
+            <button
+              onClick={resetGame}
+              type="button"
+              className="bg-blue-500 mt-5 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            >
+              Play again
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
