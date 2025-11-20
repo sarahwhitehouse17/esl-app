@@ -152,9 +152,6 @@ export default function MatchingExercise() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <button className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition">
-        <em>Select lesson</em>
-      </button>
       <h2 className="text-2xl font-semibold text-center mb-4">
         Match the words to their definitions
       </h2>
@@ -178,26 +175,31 @@ export default function MatchingExercise() {
 
       {words.map((word) => (
         <div key={word.id} className="mb-4 p-4 bg-gray-50 rounded-md shadow-sm">
-          <strong>{word.term}</strong>
+          <strong className="pr-3">{word.term}</strong>
+          <div className="relative">
+            <select
+              value={answers[word.id] || ""}
+              onChange={(e) => handleSelect(word, e.target.value)}
+              disabled={attemptCount >= maxAttempts || hasPassed}
+              className="appearance-none pr-32"
+            >
+              <option value={""}>-- choose definition --</option>
 
-          <select
-            value={answers[word.id] || ""}
-            onChange={(e) => handleSelect(word, e.target.value)}
-            disabled={attemptCount >= maxAttempts || hasPassed}
-          >
-            <option value={""}>-- choose definition --</option>
-
-            {definitions.map((def) => (
-              <option key={def} value={def}>
-                {def}
-              </option>
-            ))}
-          </select>
+              {definitions.map((def) => (
+                <option key={def} value={def}>
+                  {def}
+                </option>
+              ))}
+            </select>
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+              ⌄
+            </span>
+          </div>
 
           {correct[word.id] !== undefined && (
             <p
               className={`mt-2 text-sm font-medium ${
-                correct[word.id] ? "bg-green-500" : "bg-red-500"
+                correct[word.id] ? "bg-green-300" : "bg-red-300"
               }`}
             >
               {correct[word.id] ? "Correct" : "Incorrect"}

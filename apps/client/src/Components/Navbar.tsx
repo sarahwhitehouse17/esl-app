@@ -1,21 +1,49 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center justify-between p-3 bg-green-200">
+    <nav className="flex items-center justify-between p-3 bg-green-200 sticky top-0">
       <div className="flex justify-end w-full gap-6">
-        <Link to="/" className="hover:text-green-500">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive
+              ? "text-green-500"
+              : "text-shadow-gray-600 hover:text-green-500"
+          }
+        >
           Login
-        </Link>
-        <Link to="/homepage" className="hover:text-green-500">
+        </NavLink>
+        <NavLink
+          to="/homepage"
+          className={({ isActive }) =>
+            isActive
+              ? "text-green-500"
+              : "text-shadow-gray-600 hover:text-green-500"
+          }
+        >
           Homepage
-        </Link>{" "}
-        <Link to="/exercises" className="hover:text-green-500">
+        </NavLink>
+        <NavLink
+          to="/exercises"
+          className={({ isActive }) =>
+            isActive
+              ? "text-green-500"
+              : "text-shadow-gray-600 hover:text-green-500"
+          }
+        >
           Exercises
-        </Link>
-        <Link to="/wordle" className="hover:text-green-500">
+        </NavLink>
+        <NavLink
+          to="/wordle"
+          className={({ isActive }) =>
+            isActive
+              ? "text-green-500"
+              : "text-shadow-gray-600 hover:text-green-500"
+          }
+        >
           Wordle
-        </Link>
+        </NavLink>
       </div>
     </nav>
   );

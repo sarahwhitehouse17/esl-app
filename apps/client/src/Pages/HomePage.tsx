@@ -72,9 +72,10 @@ export default function HomePage() {
           <div className="mt-6 italic">
             {goals.length === 3 && (
               <p>
-                These are the goals we'll be focusing on.
+                Thanks for selecting your goals!
                 <strong> Want to make any updates?</strong> Let me know and we
-                can review this in our next class to make sure we're on track.
+                can review this in our next class to make sure we're still on
+                track.
               </p>
             )}
           </div>
@@ -113,10 +114,13 @@ export default function HomePage() {
             <h3>
               <strong>Your areas of focus over the next four weeks:</strong>
             </h3>
-            <ul>
+            <ul className="list-disc pl-4">
               <li>Deliver one presention on something you love</li>
-              <li>Practice using persuasive language in English</li>{" "}
-              <li>Add target</li>
+              <li>Practice using persuasive language in English</li>
+              <li>
+                Integrate one new word from the previous week into the next
+                week's session
+              </li>
             </ul>
           </div>
 
